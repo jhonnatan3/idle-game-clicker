@@ -16,6 +16,9 @@
     let loadGameElement = document.getElementById("loadGame");
     //Upgrades container element
     let upgradesElement = document.getElementById("upgrades");
+    //Change player  name element
+    let changePlayerName = document.getElementById("changePlayerName");
+
 
     //Player Object
     let player = {
@@ -37,6 +40,15 @@
         this.type = type;
         this.count = 0;
         this.value = value;
+    }
+
+    function changePlayerNames() {
+        player.name = window.prompt('Change player name:', "Player name");
+        if (player.name === null) {
+            playerName.innerText = 'MysteriousX';
+        } else {
+            playerName.innerText = player.name;
+        }
     }
 
     //Function to update cookie count
@@ -68,58 +80,48 @@
 
     }
 
-    let purchaseButtons = [];
     //Function to check if any upgrades purchases are avalible
     function checkIfPurchasesAvalible(type) {
         if (player.cookies >= type.price) {
             let buttonExists = document.body.contains(document.getElementById("buy" + type.name));
             if (!buttonExists) {
-                upgradesElement.innerHTML += "<button id='buy" + type.name + "'>Buy " + type.name + " (" + type.price + ")</button>";
-                let purchaseButton = document.getElementById("buy" + type.name);
-                purchaseButtons.push(purchaseButton);
+                createButton(type);
             }
         }
     }
 
-    function checkButtonAvalible() {
-        var purchaseButton= purchaseButtons.map(a => a.id);
-        purchaseButton.addEventListener('click', purchaseUpgrade, false);
+    function createButton(type) {
+        let btn = document.createElement("button");
+        btn.innerHTML = "Buy " + type.name + " (" + type.price + ")";
+        btn.id = "buy" + type.name;
+        btn.addEventListener("click", function () {
+            purchaseUpgrade(type);
+        });
+        upgradesElement.appendChild(btn);
     }
+
 
     function purchaseUpgrade(type) {
-
-        console.log('aaa');
-        player.cookies -= type.price;
-        player.perClick = type.value;
-        updateCookieCount(player.cookies);
-        playerCookiesPerClick.innerText = "+" + player.perClick;
-    }
-
-
-
-    //Define upgrades PerClick
-    const baker = new UpgradeObject("Baker", 80, "120%", "PerClick", 2);
-    const bakery = new UpgradeObject("Bakery", 100, "120%", "PerClick", 5);
-
-
-    playerName.innerText = player.name;
-    playerCookiesPerClick.innerText = "+" + player.perClick;
-
-    //Change player  name element
-    let changePlayerName = document.getElementById("changePlayerName");
-
-    //Change player name on button click
-    changePlayerName.onclick = function (e) {
-        player.name = window.prompt('Change player name:', "Player name");
-        if (player.name === null) {
-            playerName.innerText = 'MysteriousX';
+        let btn = document.getElementById("buy" + type.name);
+        if (player.cookies < type.price) {
+            btn.className = "disabled";
         } else {
-            playerName.innerText = player.name;
+            btn.className = "";
+            player.cookies -= type.price;
+            player.perClick += type.value;
+    
+            console.log(typeof(player.perClick, type.value));
+            console.log(player.perClick, type.value);
+    
+            updateCookieCount(player.cookies);
+            playerCookiesPerClick.innerText = "+" + player.perClick;
+            /*if (player.cookies < UpgradeObject.value) {
+                upgradesElement.removeChild();
+            }*/
         }
     }
 
-    //Add +player.perClick cookie on cookies click
-    cookiesImage.onclick = function (e) {
+    function addCookie() {
         player.cookies = player.cookies + player.perClick;
         updateCookieCount(player.cookies);
 
@@ -127,16 +129,32 @@
         checkIfPurchasesAvalible(bakery);
     }
 
-    //Save game [object on Local storage]
-    saveGameElement.onclick = function (e) {
-        saveGame()
-    }
+
+    //Define upgrades PerClick
+    const baker = new UpgradeObject("Baker", 80, "120%", "PerClick", 0, 2);
+    const bakery = new UpgradeObject("Bakery", 100, "120%", "PerClick", 0, 5);
+
+
+    playerName.innerText = player.name;
+    playerCookiesPerClick.innerText = "+" + player.perClick;
+
+    //Change player name on button click
+    changePlayerName.addEventListener('click', () => changePlayerNames());
+
+    //Add +player.perClick cookie on cookies click
+    cookiesImage.addEventListener('click', () => addCookie());
+
+    //Save game [object to Local storage]
+    saveGameElement.addEventListener('click', () => saveGame());
 
     //Load game [object from Local storage]
-    loadGameElement.onclick = function (e) {
-        loadGameSave();
-    }
+    loadGameElement.addEventListener('click', () => loadGameSave());
 })()
+
+
+
+
+
 
 //todo:
 /*
