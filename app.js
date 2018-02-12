@@ -16,8 +16,11 @@
     let loadGameElement = document.getElementById("loadGame");
     //Upgrades container element
     let upgradesElement = document.getElementById("upgrades");
+    //Upgrades info container element
+    let upgradesInfo = document.getElementById("upgrades-info");
     //Change player  name element
     let changePlayerName = document.getElementById("changePlayerName");
+
 
 
     //Player Object
@@ -94,46 +97,66 @@
         let btn = document.createElement("button");
         btn.innerHTML = "Buy " + type.name + " (" + type.price + ")";
         btn.id = "buy" + type.name;
-        btn.addEventListener("click", function () {
-            purchaseUpgrade(type);
-        });
+        btn.addEventListener('click', () => purchaseUpgrade(type));
         upgradesElement.appendChild(btn);
+        return btn;
     }
 
+    function updateButton(type, btn) {
+        btn.innerHTML = "Buy " + type.name + " (" + type.price + ")";
+    }
+
+    function createUpgradesInfo(type) {
+        let upgradeInfoElement = document.createElement("span");
+        if (checkIfUpgradesInfoExists(type)) {
+            let el = document.getElementById(type.name);
+            el.innerHTML = type.count + "x " + type.name;
+            console.log(el.innerHTML);
+        } else {
+            upgradeInfoElement.id = type.name;
+            upgradeInfoElement.innerHTML = type.count + "x " + type.name;
+            upgradesInfo.appendChild(upgradeInfoElement);
+        }
+    }
+
+    function checkIfUpgradesInfoExists(type) {
+        let upgradeExists = document.body.contains(document.getElementById(type.name));
+        return upgradeExists;
+    }
 
     function purchaseUpgrade(type) {
         let btn = document.getElementById("buy" + type.name);
         if (player.cookies < type.price) {
-            btn.className = "disabled";
+            return 0;
         } else {
-            btn.className = "";
             player.cookies -= type.price;
             player.perClick += type.value;
-    
-            console.log(typeof(player.perClick, type.value));
-            console.log(player.perClick, type.value);
-    
+
             updateCookieCount(player.cookies);
             playerCookiesPerClick.innerText = "+" + player.perClick;
             /*if (player.cookies < UpgradeObject.value) {
                 upgradesElement.removeChild();
             }*/
+            let newUpgradePrice = Math.round(type.price * type.nextUpgradePrice);
+            type.price = newUpgradePrice;
+            type.count += 1;
+            createUpgradesInfo(type, btn);
+            updateButton(type, btn);
         }
     }
+
+
 
     function addCookie() {
         player.cookies = player.cookies + player.perClick;
         updateCookieCount(player.cookies);
-
         checkIfPurchasesAvalible(baker);
         checkIfPurchasesAvalible(bakery);
     }
 
-
     //Define upgrades PerClick
-    const baker = new UpgradeObject("Baker", 80, "120%", "PerClick", 0, 2);
-    const bakery = new UpgradeObject("Bakery", 100, "120%", "PerClick", 0, 5);
-
+    const baker = new UpgradeObject("Baker", 80, 1.1, "PerClick", 0, 2);
+    const bakery = new UpgradeObject("Bakery", 100, 1.15, "PerClick", 0, 5);
 
     playerName.innerText = player.name;
     playerCookiesPerClick.innerText = "+" + player.perClick;
@@ -150,11 +173,6 @@
     //Load game [object from Local storage]
     loadGameElement.addEventListener('click', () => loadGameSave());
 })()
-
-
-
-
-
 
 //todo:
 /*

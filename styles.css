@@ -40,3 +40,8 @@ span {
 .cookies:active {
     transform: scale(1.1);
 }
+
+.upgrades button, .upgrades-info span {
+    display: block;
+    margin-bottom: 10px;
+}
