@@ -26,7 +26,7 @@
     //Player Object
     let player = {
         name: 'Artur',
-        cookies: 79,
+        cookies: 0,
         perClick: 1
     }
 
@@ -152,11 +152,19 @@
         updateCookieCount(player.cookies);
         checkIfPurchasesAvalible(baker);
         checkIfPurchasesAvalible(bakery);
+        checkIfPurchasesAvalible(store);
+        checkIfPurchasesAvalible(mall);
+        checkIfPurchasesAvalible(mallChain);
+        checkIfPurchasesAvalible(manager);
     }
 
     //Define upgrades PerClick
-    const baker = new UpgradeObject("Baker", 80, 1.1, "PerClick", 0, 2);
-    const bakery = new UpgradeObject("Bakery", 100, 1.15, "PerClick", 0, 5);
+    const baker = new UpgradeObject("Baker", 80, 1.23, "PerClick", 0, 2);
+    const bakery = new UpgradeObject("Bakery", 250, 1.41, "PerClick", 0, 5);
+    const store = new UpgradeObject("Store", 1000, 1.56, "PerClick", 0, 25);
+    const mall = new UpgradeObject("Mall", 5000, 1.75, "PerClick", 0, 150);
+    const mallChain = new UpgradeObject("Mall Chain", 25000, 1.92, "PerClick", 0, 450);
+    const manager = new UpgradeObject("Manager", 500000, 2.01, "PerClick", 0, 5150);
 
     playerName.innerText = player.name;
     playerCookiesPerClick.innerText = "+" + player.perClick;
